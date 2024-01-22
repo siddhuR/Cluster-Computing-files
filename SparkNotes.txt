@@ -1,0 +1,33 @@
+total 4 context 
+		1)Spark Context
+		2)SQL ""
+		3)Steaming
+		4)Hive
+all together called spark session
+
+Scala have 3 prefixes-
+		1. Var (mutable)  ,var a=5
+		2.Val	(immutable) ,val b="hello"
+		3.Lazy  (lazy evaluation if we want anything to delay) ,lazy val c=20  
+									it is not assigned yet when we write c and hit enter then it will asign
+
+==========================================
+
+=> SCALA // basic commands
+
+>> val a = 5
+a: Int = 5
+
+>> a = 7	// gives error
+<console>:23: error: reassignment to val
+       a = 7
+         ^
+
+>> val b = "HELLO"
+b: String = hello
+
+>> lazy val c = 7
+c: Int = <lazy>
+
+>> c
+res0: Int = 7
