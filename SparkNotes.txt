@@ -31,3 +31,59 @@ c: Int = <lazy>
 
 >> c
 res0: Int = 7
+
+==========================================
+
+# OPERATORS IN SCALA
+
+ARITHMETIC OPERATORS:
+
+>> val operand1 = 10
+>> val operand2 = 7
+
+>> println(operand1 + operand2)
+>> println(operand1 - operand2)
+>> println(operand1 * operand2)
+>> println(operand1 / operand2)
+>> println(operand1 % operand2)
+
+RELATIONAL OPERATORS:
+
+>> val operand1 = 10
+>> val operand2 = 7
+
+>> println(operand1 > operand2)
+>> println(operand1 < operand2)
+>> println(operand1 >= operand2)
+>> println(operand1 <= operand2)
+>> println(operand1 != operand2)
+
+LOGICAL OPERATORS:
+
+>> val A = true
+>> val B = false
+>> val exp = A && B
+
+BITWISE OPERATOR:
+
+>> val A = 12
+>> val B = 5
+
+>> println(~A)
+>> println(~B)
+>> println(A & B)
+>> println(A | B)
+>> println(A ^ B)
+
+ASSIGNMENT OPERATORS:
+
+>> vae A = 10
+>> var B = 7
+
+>> print("Before using an assignment operator: ")
+>> println(A)
+
+>> A += B
+
+>> print("After using an assignment operator: ")
+>> println(A)
