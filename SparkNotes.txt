@@ -87,3 +87,65 @@ ASSIGNMENT OPERATORS:
 
 >> print("After using an assignment operator: ")
 >> println(A)
+
+===============================================
+
+>> tringVar = "what is the length of this string?"
+>> ntln(stringVar.length())
+
+======
+
+>> println("Hello" + "World")
+
+>> val string1 = "Hello"
+>> val string2 = "World"
+>> print(string1 + string2)
+
+===============================================
+
+
+RDD (RESILIENT DISTRIBUTED DATASET)
+
+
+	3 ways to create RDD:
+>> PARALLELIZE METHOD
+
+sc.parallelize(scala_collection)
+
+>> TEXTILE METHOD:
+
+sc.textFile("")
+
+>> USING EXISTING RDD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
