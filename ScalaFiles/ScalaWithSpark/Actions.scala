@@ -4,19 +4,20 @@ object Actions {
   def main(args: Array[String]){
     val spark = SparkSession.builder().master("local[1]").appName("abc").getOrCreate()
     val sc = spark.sparkContext
+    sc.setLogLevel("OFF")
 
     // Actions
     val rdd = sc.parallelize(List(1,2,3,4,5))
     val result2 = rdd.count()
     println(result2)
     val result3 = rdd.max()
-    println(result2)
+    println(result3)
     val result4 = rdd.min()
-    println(result2)
+    println(result4)
     val result5 = rdd.sum()
-    println(result2)
+    println(result5)
     val result6 = rdd.mean()
-    println(result2)
+    println(result6)
     
     // CountByKey & CountByValue
     val rdd1 = sc.parallelize(Array(("a",1),("a",2),("b",3)))
@@ -36,6 +37,25 @@ object Actions {
     println(rdd3.partitions.length)
     rdd3.coalesce(2)
     println(rdd3.partitions.length)
-    val rdd4 = sc.parallelize(Array(("a",5),("a",8),("b",1),("b",6)))
+    
+    // adding some words in the output with the rdd input
+    val rdd4 = sc.parallelize(List("cone","venila","Butterscotch","chocolate"))
+    rdd4.foreach(println);
+    
+    for (i <-rdd4){
+     println(i+" is good.");
+   }
+    
+    for (i <-rdd4){
+     println(i+", " + i.length());
+   }
+    
+    // Sample
+    val x = sc.parallelize(Array(1,2,3,4,5,6,7,8,9,0,10))
+    val y = x.sample(false,0.4,1)
+    
+    println(y.collect().mkString(", "))
+    
+    
   }
 }
