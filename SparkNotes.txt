@@ -90,8 +90,8 @@ ASSIGNMENT OPERATORS:
 
 ===============================================
 
->> tringVar = "what is the length of this string?"
->> ntln(stringVar.length())
+>> stringVar = "what is the length of this string?"
+>> println(stringVar.length())
 
 ======
 
@@ -112,7 +112,7 @@ RDD (RESILIENT DISTRIBUTED DATASET)
 
 sc.parallelize(scala_collection)
 
->> TEXTILE METHOD:
+>> TEXTFILE METHOD:
 
 sc.textFile("")
 
