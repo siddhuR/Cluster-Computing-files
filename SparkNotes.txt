@@ -120,9 +120,21 @@ sc.textFile("")
 
 
 
+==============================================
 
+Collection library:
 
+val seqCollection = Seq(2,4,6,8)
+val result = seqCollection.apply(1)
+print(result)	// ans : // 4
 
+val setCollection = Set("Apple", "Orange", "Banana", "Grape")
+val result1 = setCollection.apply("Orange")
+println(result1)	// ans : // true
+
+val mapCollection = Map(("a",25),("b",50),("c",75))
+val result2 = mapCollection.apply("c")
+println(result2)	// ans : // 75
 
 
 
