@@ -137,9 +137,15 @@ val result2 = mapCollection.apply("c")
 println(result2)	// ans : // 75
 
 
+==============================================
 
+# Creation of data frame from existing data
 
+val g = sc.parallelize(Array(("a",1),("a",2))).toDF()	// to covert rdd to dataframe
 
+val df = spark.read.format("csv").option("header","true").option("inferSchema","true").load("/home/siddhu/workspace/Input_Files/dataframe.csv")	//to convert different type of data into data frame like json,csv etc.
+
+df.show()	// to print the data present in the csv file
 
 
 
