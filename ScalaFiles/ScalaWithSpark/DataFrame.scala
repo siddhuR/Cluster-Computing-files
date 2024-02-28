@@ -25,9 +25,6 @@ object DataFrame {
     
     println(y.collect().mkString(", "))
     
-    
-    
-    
     // DataFrame
     
     val rdd1 = sc.parallelize(Array(("a",1),("a",2),("b",3)))
@@ -35,6 +32,7 @@ object DataFrame {
     // val rdd2  = rdd1.toDF()
     // rdd2.show()
     // rdd2.printSchema()
+    
     
     
    
