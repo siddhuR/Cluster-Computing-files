@@ -21,6 +21,7 @@ object listScala {
     val conc = list1:::list3;    // concatenation
     conc.foreach(println)
     
+    // Head & Tail
     println("Head"+list.head);    // head gives only first element in the list
     println("Tail"+list1.tail);   // tail gives all the values except first element in the list
   }
