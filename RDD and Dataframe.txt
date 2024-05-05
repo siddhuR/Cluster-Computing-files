@@ -1,0 +1,246 @@
+RDD -> Resilient Distribution Datasets.
+	RDD is the primary data abstraction in Apache Spark and the core of Spark
+
+Feeatures of RDD:
+	In-memory
+	Immutable
+	Lazy Evaluateed
+	Parallel
+
+
+Operationns -> Transformations
+	    -> Actions
+==============================
+>>Creating RDD
+Method-1. SparkContest.parallelize Method	(only for testing)
+
+val r1 = spark.sparkContest.parallelize(Seq(("A",1),("B",2),("C",3)))
+
+Method-2. SparkContest text file Method
+
+val r2 = spark.sparkContext.textFile("/home/siddhu/g1.txt")
+r2.collect()
+
+Method-3. Existing RDD
+
+val r3 = r2.flatMap(_.split(" "))	// Flatmat is the transformation method that used to read the rdd word by word.
+r2.collect()
+
+Method-4. Existing Dataframe
+
+val r4 = spark.range(20).toDF().rdd
+r4.collect()
+==============================
+
+RDD Transformation in Apache Spark	(changing data from one state to another state)
+-> transforamtion always create new RDD without updating the existing one
+	for example: RDD1 ---MAP---> RDD2 ---Filter---> RDD3
+
+transformations are of 2 types
+-> Narrow transformations:these transformations are performed locally on each partition and do not require any exchange of data between partitions.
+	example : map(), flatMap(), filter() etc..
+-> Wide transformations: these partitions require the exchange of data between partitions and can be more expansive compared to narrow transformations.
+	examplesreduceByKey(), groupByKey(), join() etc..
+
+=======> 
+import org.apache.spark.sql.sparksession
+
+object obj1 {
+	def main(args: Array[string]) {
+	val  spark = Sparksession.builder()
+		.master("local[1]")
+		.appName("abc")
+		.getOrCreate();
+	val sc = spark.sparkContext
+	val a = sc.textFile("home/siddhu/DR.txt")
+	val b = a.flatMap(f=>f.split(","))
+	val c = b.map (s => (s,1))
+	val d = c.reduceByKey(_ + _)
+	val e = d.saveAsTextFile("home/siddhu/outtext")
+}
+}
+
+=============================
+
+Map and FlatMap
+
+val maprdd = sc.textFile("home/siddhu/example.txt")
+val maordd2 = maprdd.map(r=>r.split" "))
+maprdd2.collect()	// Array(Array(a, b, c), Array(d, e, f), Array(g, h, i))
+
+val flatmaprdd = sc.textFile("home/siddhu/example.txt")
+val flatmaordd2 = flatmaprdd.flatMap(r=>r.split" "))
+flatmaprdd2.collect()	// Array(a,b,c,d,e,f,g,h,i)
+
+================================
+
+>>SEMANTICS:
+
+groupByKey: This transformation groups all the values associated with each unique key into a single list
+
+reduceByKey: This transformation groups the values associated with each key and applies a specified reduction function to combine them into a single value per key.
+
+Performance:
+
+groupByKey: This transformation can be less efficient in terms of both time and memory usage
+
+reduceByKey: This transformation is generally more efficient than groupByKey
+
+Use Cases:
+
+groupByKey: Use this transformation when you need to group data by keys and you want to retain all the values associated with each key as an iterable collection
+
+reduceByKey: Use this transformation when you want to group data by keys and perform an aggregation or reduction operation on the values associated with each key.
+
+===============================
+
+
+object objl {
+	def main(args: Array[String]) {
+	val spark = SparkSession.builder() I
+		.master("local [1]")
+		.appName("abc")
+		.getOrCreate();
+	val sc = spark.sparkContext
+	val x= sc.parallelize (Array(1,2,3,4)) 	
+	println(x.collect.mkString(", ")) //collect
+	val u= sc.parallelize (Array(1,2,3), 2)
+	val j= u.partitions.size //getting number of partitions
+	println(j)
+	val s= sc.parallelize (Array(1,2,3,4))
+	val d= s.reduce((a,b) => a+b) //reduce
+	println(d)
+	val f = s.max //max
+	val g = s.min //min
+	val k = s.sum //sum
+	val i = s.mean //mean
+	val z = s.stdev //standard deviation
+	val w= sc.parallelize (Array(('J', "James"), ('F',"Fred"), ('A', "Anna"), ('J', "John")))
+	println(f)
+	println(g)
+	println(k)
+	println(i)
+	println(z)
+	val o=w.countByKey() //countbykey
+	println(o) 	
+	w.saveAsTextFile("home/siddhu/countbykeyoutput") //saveastextfile
+
+========================================================
+
+>>Dataframes
+
+A Dataframe is a distributed collection of data organized into named column.
+it is conceptionally equivalent to a table in a relational database or a R/ python dataframe.
+
+Features of Dataframe:
+
+-> Distributed collection of row object
+-> Data Processing
+-> Optimization using catalyst optimizer.
+-> Hive Compatibility
+
+dataframe is compile-time type safety
+
+===============================
+
+Creation of Dataframe
+-> the most basic way is to transform another dataframe.
+-> one can also create a dataFrame from RDD
+-> the next way is to create a Dataframe from a local collection.
+-> next option is by using SQL
+-> Create a Dataframe is by reading the data from the source. like json, csv etc..
+
+=========================================
+Creating DataFrame Methods:
+
+import spark.implicits._
+val col = Seq("team","matches")
+val data = Seq(("India",300), ("Australia", 250), ("England",275))
+val rdd = spark.sparkContext.parallelize(data)
+
+Method1: toDF
+val df1 = rdd.toDF("team","matches")
+
+Method2: createDataFrame
+val df2 = spark.createDataFrame(rdd).toDF(col:_*)
+
+Method3: Using CSV file
+val df3 = spark.read.csv("/home/siddhu/customers.csv")
+
+Method4: Using JSON file
+val df4 = spark.read.json("/home/siddhu/zip.json")
+
+df4.printSchema()
+
+Method4: Reading Dataframe from Text file
+val df5 = spark.read.text("/home/siddhu/aa.txt")
+
+=========================================
+
+Spark DataFrame API queries:
+
+import org.apache.spark.sql.SparkSession
+
+object obj1 {
+	def main(args: Array[string]) {
+	val spark = SparkSession.builder()
+			.master("local[1]")
+			.appName("abc")
+			.getOrCreate()
+
+	val df = spark.read.format("csv")
+			.option("header","true")
+			.load("/home/siddhu/ques10k.csv")
+	df.show()
+	df.printschema()
+	df.select("tag").show()
+	
+	df.select("tag").filter("tag == 'php'").show()	// "WHERE" command in SQL
+	df.select("tag").filter("tag LIKE 'c%'").show()	// "LIKE" command in SQL
+	df.select("tag").filter("tag LIKE 'c%'").filter("Id == 4 or Id == 6").show()
+	df.select("tag").filter("tag LIKE 'c%'").filter("Id in (4,6)").show()
+	df.groupBy("tag").count().show()
+	df.groupBy("tag").count().filter("count > 2").show()	// "HAVING" in SQL
+}
+}
+
+=======================================
+example2:
+
+Spark DataFrame API queries:
+
+import org.apache.spark.sql.SparkSession
+
+object obj1 {
+	def main(args: Array[string]) {
+	val spark = SparkSession.builder()
+			.master("local[1]")
+			.appName("abc")
+			.getOrCreate()
+
+	val df = spark.read.format("csv")
+			.option("header","true")
+			.load("/home/siddhu/customers.csv")
+	val df1 = spark.read.format("csv")
+			.option("header","true")
+			.load("/home/siddhu/orders.csv")
+	df.show()
+	df1.show()
+	df.printschema()
+	df1.printschema()
+
+	val df2 = df.select(df.col("custommer_id").cast("integer"))
+	df2.printschema()
+	
+	df.join(df1,Seq("customer_id"),"inner").show()
+	df.join(df1,Seq("customer_id"),"left_outer").show()
+	df.join(df1,Seq("customer_id"),"right_outer").show()
+	df.join(df1,Seq("customer_id"),"full_outer").show()
+
+	val df3 = spark.read.format("csv")
+			.option("header","true")
+			.load("/home/siddhu/ques10k.csv")
+	df3.select("tag").distinct().show(10)
+	df3.select("tag").distinct().orderBy("tag").show(10)
+}
+}

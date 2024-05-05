@@ -1,0 +1,78 @@
+from pyspark import SparkFiles
+from pyspark.sql import SparkSession
+
+from pyspark.ml.feature import VectorAssembler, StandardScaler
+from pyspark.ml.clustering import KMeans
+from pyspark.ml.evaluation import ClusteringEvaluator
+import matplotlib.pyplot as plt
+import pandas as pd
+
+spark = SparkSession.builder.appName("Mastering K-means Clustering with PySpark MLlib").getOrCreate()
+
+Load the dataset
+
+df = spark.read.csv(SparkFiles.get("Iris.csv"), header=True, inferSchema=True)
+df.show(5)
+
+Data Preprocessing
+
+# Assembling features into a single column
+assembler = VectorAssembler(inputCols=["SepalLengthCm", "SepalWidthCm", "PetalLengthCm", "PetalWidthCm"], outputCol="features")
+data_df = assembler.transform(df)
+
+# Scaling the features
+scaler = StandardScaler(inputCol="features", outputCol="scaled_features")
+scaler_model = scaler.fit(data_df)
+data_df = scaler_model.transform(data_df)
+
+data_df.show(5)
+
+Finding the Optimal Number of Clusters (K)
+
+wssse_values =[]
+evaluator = ClusteringEvaluator(predictionCol='prediction', featuresCol='scaled_features', \
+                                metricName='silhouette', distanceMeasure='squaredEuclidean')
+
+for i in range(2,8):    
+    KMeans_mod = KMeans(featuresCol='scaled_features', k=i)  
+    KMeans_fit = KMeans_mod.fit(data_df)  
+    output = KMeans_fit.transform(data_df)   
+    score = evaluator.evaluate(output)   
+    wssse_values.append(score)  
+    print("Silhouette Score:",score)
+
+# Plotting WSSSE values
+plt.plot(range(1, 7), wssse_values)
+plt.xlabel('Number of Clusters (K)')
+plt.ylabel('Within Set Sum of Squared Errors (WSSSE)')
+plt.title('Elbow Method for Optimal K')
+plt.grid()
+plt.show()
+
+Performing K-means Clustering
+
+#Define the K-means clustering model
+kmeans = KMeans(k=4, featuresCol="scaled_features", predictionCol="cluster")
+kmeans_model = kmeans.fit(data_df)
+
+# Assigning the data points to clusters
+clustered_data = kmeans_model.transform(data_df)
+
+Evaluating the Model
+
+output = KMeans_fit.transform(data_df)
+wssse = evaluator.evaluate(output)
+print(f"Within Set Sum of Squared Errors (WSSSE) = {wssse}")
+
+Visualizing the Results
+
+# Converting to Pandas DataFrame
+clustered_data_pd = clustered_data.toPandas()
+
+# Visualizing the results
+plt.scatter(clustered_data_pd["SepalLengthCm"], clustered_data_pd["SepalWidthCm"], c=clustered_data_pd["cluster"], cmap='viridis')
+plt.xlabel("SepalLengthCm")
+plt.ylabel("SepalWidthCm")
+plt.title("K-means Clustering with PySpark MLlib")
+plt.colorbar().set_label("Cluster")
+plt.show()

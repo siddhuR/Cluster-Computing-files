@@ -152,6 +152,618 @@ df.show()	// to print the data present in the csv file
 
 
 
+=====================================
+
+Apache kafka:
+
+//on zookeeper
+./bin/zookeeper-server-start.sh config/zookeeper.properties 
+
+//on server
+./bin/kafka-server-start.sh ./config/server.properties 
+
+>>jps	// to check deomons are started or not
+
+// creating topic
+./bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic firsttopic --create --partitions 3 --replication-factor 1
+
+// open producer
+./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic first
+
+// open consumer
+ ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic first
+
+==============================
+
+configuring producer in kafka:
+
+1) ./bin/zookeeper-server-start.sh config/zookeeper.properties
+
+2) ./bin/kafka-server-start.sh ./config/server.properties 
+
+3) write code in compiler:
+
+//package kafka1;
+
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import java.util.Properties;
+
+
+
+public class kafka1 {
+
+    public static void main(String args[]) {
+
+        //properties for producer
+        Properties props = new Properties();
+        props.put("bootstrap.servers", "localhost:9092");
+        props.put("key.serializer", "org.apache.kafka.common.serialization.IntegerSerializer");
+        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+
+        //create producer
+        Producer<Integer, String> producer = new KafkaProducer<Integer, String>(props);
+
+        //send messages to my-topic
+        for(int i = 0; i < 100; i++) {
+            ProducerRecord producerRecord = new ProducerRecord<Integer, String>("first", i, "Test Message #" + Integer.toString(i));
+            producer.send(producerRecord);
+        }
+
+        //close producer
+        producer.close();
+    }
+
+}
+
+4) ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic first
+
+================================
+
+configuring Consumer in kafka:
+
+1) ./bin/zookeeper-server-start.sh config/zookeeper.properties
+
+2) ./bin/kafka-server-start.sh ./config/server.properties 
+
+3) write code in compiler:
+
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+
+import java.util.Arrays;
+import java.util.Properties;
+
+public class kafkaConsumer {
+  public static void main(String args[]) {
+
+      //properties for producer
+      Properties props = new Properties();
+      props.put("bootstrap.servers", "localhost:9092");
+      props.put("group.id", "test-group");
+      
+      props.put("enable.auto.commit", "true");	// using auto commit
+      
+      props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+      props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+
+      //create kafka consumer
+      KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(props);
+
+
+      //subscribe to topic
+      consumer.subscribe(Arrays.asList("first"));
+
+      //infinite poll loop
+      while (true) {
+    	  ConsumerRecords<String, String> records = consumer.poll(100);
+    	  for (ConsumerRecord<String, String> record : records)
+    		  System.out.printf("offset = %d, key = %s , value = %s",record.offset(), record.key(), record.value());
+
+      }
+  }
+
+}
+
+
+4)  ./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic first
+
+
+=================================================================================================
+
+
+>> GraphX
+
+it si the apache spark component for graph parallel computatuibs, build upon a branch of mathematics call graph theory.
+
+it is the combination of 2 parallel branches
+-> Data Parallel
+-> Graph Parallel
+
+example : 
+Raw Data --> ETL (Initial Graph) --> Slice (Subgraph) --> Compute (PageRank) --> Analyze (Top Users) -->{any other process}
+
+2 types of graphs
+- Regular Graph
+- Directed Graph
+
+3 components
+
+Edges		0	0
+Verties		 -------
+Triplets	0-------0
+
+--> Creation of GraphX
+	1) Vertex RDD
+	2) Edge RDD
+	3) Graph(VRDD, ERDD, DefaultVertex)
+
+1st method: CLI method
+
+import org.apache.spark.graphx._
+
+val vertices = Array((1L,("SFO")),(2L,("ORD")),(3L,("DFW")))		// creating vertices
+val vRDD = sc.parallelize(vertices)
+vRDD.take(1)
+
+val nowhere = "nowhere"	// default vertex. this is optional
+
+val edges = Array(Edge(1L,2L,1800),Edge(2L,3L,800),Edge(3L,1L,1400))	// creating edges
+val eRDD = sc.parallelize(edges)
+eRDD.take(1)
+
+val graph = Graph(vRDD,eRDD,nowhere)	// creating graph
+
+// Actions
+scala> graph.numEdges
+res2: Long = 3
+
+scala> graph.numVertices
+res3: Long = 3                                                                  
+
+scala> graph.inDegrees
+res4: org.apache.spark.graphx.VertexRDD[Int] = VertexRDDImpl[19] at RDD at VertexRDD.scala:57
+
+scala> graph.outDegrees
+res5: org.apache.spark.graphx.VertexRDD[Int] = VertexRDDImpl[23] at RDD at VertexRDD.scala:57
+
+scala> graph.degrees
+res6: org.apache.spark.graphx.VertexRDD[Int] = VertexRDDImpl[27] at RDD at VertexRDD.scala:57
+
+
+scala> graph.inDegrees.collect.foreach(println)
+(3,1)
+(1,1)
+(2,1)
+
+scala> graph.outDegrees.collect.foreach(println)
+(3,1)
+(1,1)
+(2,1)
+
+scala> graph.degrees.collect.foreach(println)
+(3,2)
+(1,2)
+(2,2)
+
+scala> graph.triplets.collect.foreach(println)
+((1,SFO),(2,ORD),1800)
+((2,ORD),(3,DFW),800)
+((3,DFW),(1,SFO),1400)
+
+# Q) print the data in which the distance is greater than 1000 miles
+scala> graph.edges.filter{case Edge(src, dst, prop) => prop > 1000 }.collect.foreach(println)
+Edge(1,2,1800)
+Edge(3,1,1400)
+
+//
+
+example Qustion:
+
+val vertices1 = Array((3L,("rxin","stu")),(5L,("franklin","prof")),(7L,("jgonzal","pstdoc")),(2L,("istoca","prof")))		// creating vertices
+val vRDD1 = sc.parallelize(vertices1)
+vRDD1.take(1)
+
+val nowhere = "nowhere"	// default vertex. this is optional
+
+val edges1 = Array(Edge(5L,3L,("advisor")),Edge(3L,7L,("collab")),Edge(5L,7L,("PI")),Edge(2L,5L,("colleague")))	// creating edges
+val eRDD1 = sc.parallelize(edges1)
+eRDD1.take(1)
+
+val graph1 = Graph(vRDD1,eRDD1,nowhere)
+
+============
+// IDE Method:
+
+import org.apache.spark._
+import org.apache.spark.graphx._
+// To make some of the examples work we will also need RDD
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.SparkSession
+
+object graphX {
+  def main(args: Array[String]) {
+    val spark = SparkSession.builder().master("local[1]").appName("abc").getOrCreate()
+    val sc = spark.sparkContext
+    sc.setLogLevel("OFF")
+
+    val v1 = sc.parallelize(Array(
+      (2L, ("rxin", "stu")),
+      (5L, ("franklin", "prof")),
+      (3L, ("rxin", "stu")),  
+      (7L, ("igonzal", "pst.doc"))  
+    ))
+
+    val e1 = sc.parallelize(Array(
+      Edge(2L, 5L, "Colleague"),
+      Edge(5L, 3L, "Advisor"),
+      Edge(3L, 7L, "Collab"),
+      Edge(5L, 7L, "Pl")
+    ))
+
+    val graph = Graph(v1, e1)
+   
+    // Filter vertices for professors
+    val profVertices = graph.vertices.filter { case (id, (_, occupation)) => occupation == "prof" }
+    val cols = graph.edges.filter{case Edge( a,b,c) => c== "Colleague"}.count()
+   
+   
+    // Print information of professors
+    println("Professors:")
+    profVertices.collect.foreach(println)
+  }
+}
+
+=========================================
+
+
+import org.apache.spark.graphx._
+
+// load the edges first
+val graph = GraphLoader.edgeListFile(sc, "<<file path>>"
+
+val graph = GraphLoader.edgeListFile(sc, "/home/siddhu/workspace/Input_Files/com-youtube.ungraph.txt")
+
+println("NumOfEdges:",graph)
+
+// number of iterations as the argument
+val staticPageRank = graph.staticPageRank(10)
+staticPageRank.vertices.collect()
+
+val pageRank = graph.pageRank(0.001).vertices
+
+//print top 5 items from result
+println(pageRank.top(5).mkString("\n"))
+
+
+
+
+=========================================
+
+MLlib:
+
+basic data types 
+
+>> vectors
+     there are 2 types of vectors-
+	1. sparse vector	(which is having more 0 values)
+	2. dense vector		(which is having more 1 values)
+
+>> Matrice
+     there are 2 types of matrice-
+	1. sparse matrice	(which is having more 0 values)
+	2. dense matrice	(which is having more 1 values)
+
+>> Lable point:
+	it is a vector with a labels
+
+=>
+example
+
+import org.apache.
+.
+.
+.
+.
+
+====
+// example for matrix dense
+import org.apache.spark.mllib.linalg.{Matrix, Matrices}
+
+val = Matrix = Matrices.dense(3,2,Array(1.0,3.0,5.0,2.0,4.0,6.0))
+//val Matrix = Matrices.sparse
+
+====
+// example for vector
+
+======================================
+
+>>pyspak
+
+>>>>>>>
+
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.appName('UBD').getOrCreate()
+df = spark.read.format("csv").option("header","true").load(/home/)
+df.columns
+df.show()
+from pyspark.ml.feature import StringIndexer
+qualification_indexer = StringIndexer(inputCol="qualification", outputCol="qualificationIndex")
+df1 = qualification_indexer.fit(df).transform(df)
+df1.show()
+
+gender_indexer = StringIndexer(inputCol="gender", outputCol="genderIndex")
+df2 = gender_indexer.fit(df).transform(df)
+df2.show()
+
+<<<<<<<<<
+// method2: Spark method
+>>>>>>>>>
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.ml.feature.StringIndexer
+
+// Create a Spark session
+val spark = SparkSession.builder.appName("UBD").getOrCreate()
+
+// Read the CSV file
+val df = spark.read.format("csv").option("header", "true").load("/home/siddhu/workspace/Input_Files/mlInputs/data.csv")
+
+// Show the column names
+println("Column names:")
+df.columns.foreach(println)
+
+// StringIndexer for qualification
+val qualificationIndexer = new StringIndexer()
+  .setInputCol("qualification")
+  .setOutputCol("qualificationIndex")
+val df1 = qualificationIndexer.fit(df).transform(df)
+println("\nDataframe with qualificationIndex:")
+df1.show()
+
+// StringIndexer for gender
+val genderIndexer = new StringIndexer()
+  .setInputCol("gender")
+  .setOutputCol("genderIndex")
+val df2 = genderIndexer.fit(df).transform(df)
+println("\nDataframe with genderIndex:")
+df2.show()
+
+<<<<<<<<<
+
+========
+// In machine learning, it is common to run a sequence of algorithms to process and learn from data. E.g: a simple text document processing workflow might include several stages:
+
+// split each document's text into words.
+
+// Convert each documents words into a numerical features words
+
+// A pipeline specified as a sequence of stages, and each stage is either a Traansformer or an Estimator. These stages are run iin order, and the input DataFrame is transformed as it passes through each stage.
+
+from pyspark.ml import pipeline
+df	// reload data
+qualification_indexer = StringIndexer(inputCol="qualification", outputCol="qualificationIndex")
+gender_indexer = StringIndexer(inputCol="gender",outpuCol="genderIndex")
+
+Pipeline
+--
+-
+
+-
+-
+
+===========
+
+//StopWords Remover
+
+==========
+
+// Regression
+
+>>>>pyspark method:
+
+from pyspark.sql.import SparkSession
+spark = sparkSession.builder.getOrCreate()
+// load data
+data = spark.read.csv('/home/siddhu/workspace/Input_Files/mlInputs/boston_housing.csv',header=True,inferSchema=True)
+
+// create features vector
+feature_columns = data.columns[:-1]	// here we omit the final column
+
+from pyspark.ml.feature import VectorAssembler
+assembler = VectorAssembler(inputCols=feature_columns,outCol = "features")
+data_2 = assembler.transform(data)
+
+// train/test split
+train, test = data_2.randomSplit([0.7, 0.3])
+
+// define the model
+from pyspark.ml.regression import LinearRegression
+algo = LinearRegression(featuresCol="features", labelCol="medv")
+
+//train the model
+model = algo.fit(train)
+//evaluation
+evaluation_summary = model.evaluate(test)
+evaluation_summary.meanAbsoluteError
+evaluation_summary.rootMeanSquaredError
+evaluation_summary.r2
+//predicting values
+predictions = model.transform(test)
+predictions.select(predictions.columns[13:]).show()	// here filtering out some columns just for the figh=ure to fit
+
+
+
+
+>>>>scala method
+
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.ml.feature.VectorAssembler
+import org.apache.spark.ml.regression.LinearRegression
+
+// Create a Spark session
+val spark = SparkSession.builder.appName("UBD").getOrCreate()
+
+// Load data from CSV
+val data = spark.read.format("csv").option("header", "true").option("inferSchema", "true").load("/home/siddhu/workspace/Input_Files/mlInputs/boston_housing.csv")
+
+// Create features vector
+val featureColumns = data.columns.dropRight(1) // Omit the final column
+
+val assembler = new VectorAssembler().setInputCols(featureColumns).setOutputCol("features")
+val dataWithFeatures = assembler.transform(data)
+
+// Train/test split
+val Array(train, test) = dataWithFeatures.randomSplit(Array(0.7, 0.3))
+
+// Define the Linear Regression model
+val algo = new LinearRegression().setFeaturesCol("features").setLabelCol("medv")
+
+// Train the model
+val model = algo.fit(train)
+
+// Evaluate the model
+val evaluationSummary = model.evaluate(test)
+println(s"Mean Absolute Error: ${evaluationSummary.meanAbsoluteError}")
+println(s"Root Mean Squared Error: ${evaluationSummary.rootMeanSquaredError}")
+println(s"R-squared: ${evaluationSummary.r2}")
+
+
+==========================
+
+// scaling in ML (standard scaler)
+// create a data by own intentionally, keep higher values of numeric values for scaling
+
+from pyspark.ml.feature import standardScaler
+
+dataFrame = spark.read.format("libsvm").load("/home/")
+scaler = standardScaler(inputCol= "features", outputCol="scaledFeatures", withStd=True, withMean = False)
+
+// compute summary static by fitting the standardscaler
+scalerModel = scaler.fit(dataFrame)
+
+// Normalization each features to have unit standard deviation
+scaleData = scalerModel.transform(dataFrame)
+scaledData.show()
+
+>>> Scala
+
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.ml.feature.{StandardScaler, VectorAssembler}
+
+// Create a SparkSession
+val spark = SparkSession.builder()
+  .appName("StandardScalerExample")
+  .getOrCreate()
+
+// Load your own data into a DataFrame
+val data = spark.read
+  .option("header", "true")  // If your data has a header
+  .csv("path_to_your_data.csv") // Change this to the path of your CSV file
+
+// Display the schema of the DataFrame
+data.printSchema()
+
+// Define the columns you want to scale
+val colsToScale = Array("salary")
+
+// Create a VectorAssembler to assemble the feature vector
+val assembler = new VectorAssembler()
+  .setInputCols(colsToScale)
+  .setOutputCol("features")
+
+// Assemble the features into a single column
+val assembledData = assembler.transform(data)
+
+// Define the StandardScaler and configure it
+val scaler = new StandardScaler()
+  .setInputCol("features")
+  .setOutputCol("scaledSalary")
+  .setWithStd(true)
+  .setWithMean(true)
+
+// Fit the StandardScaler to your data
+val scalerModel = scaler.fit(assembledData)
+
+// Transform your data using the scaler model
+val scaledData = scalerModel.transform(assembledData)
+
+// Show the original and scaled data
+scaledData.select("salary", "scaledSalary").show()
+
+// Stop the SparkSession
+spark.stop()
+
+
+
+=============================
+
+
+df_pyspark.show()
+
+Droppng rows containing NUll values
+
+dataframe.na.drop() function drop rows containing even a single null value
+
+ANY -> Drops rows containing any number of Null values
+ANY -> Drops rows  only if a row contains all Null values
+
+
+null_dropped=df_pyspark.na.drop()
+null_dropped.show()
+
+Subset in dataframe.na.drop()
+
+The subset parameter inside the drop method accepts a list of column names (List[String]) such that the Null check happens only in the mentioned subset of columns.
+
+non_null_year = df_pyspark.na.drop(subset=['Joining Year'])
+non_null_year.show()
+
+Fill Null values
+
+df_pyspark.na.fill('Generalist',subset=['Department']).show()
+
+Replace Values
+df_pyspark.replace({'Information Tech':'IT'},subset=['Department']).show()
+
+
+outlier removal
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

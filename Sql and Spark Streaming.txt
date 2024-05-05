@@ -1,0 +1,183 @@
+Spark Sql:
+
+import org.apache.spark.sql.sparksession
+
+object obj {
+	def main(args: Array[String]) {
+	
+	val spark = Sparksession.builder()
+		.master("local[1]")
+		.appName("abc")
+		.getOrCreate();
+
+val df = spark.read.format("csv").option("header","true").load("home/siddhu/workspace/ques10k.csv")
+df.createOrReplaceTempView("mytable") //CREATING TEMP TABLE spark.catalog.listTables().show() //LISTING TABLES
+
+//spark.sql("show tables").show() //USE OF SPARK SQL
+
+//spark.sql("select id, tag from mytable limit 10").show() //SELECT
+
+//spark.sql("select from mytable where tag ='php'").show(10) //WHERE
+
+//spark.sql("select count(*) from mytable where tag = 'php'").show(10) //COUNT
+
+//spark.sql("select from mytable where tag like 'c'").show(10) //LIKE
+
+//spark.sql("select from mytable where Id in (4,6,11,25)").show(10) //IN
+
+//spark.sql("select tag,count(*) as total_count from mytable group by tag").show(10) //GROUP BY
+
+//spark.sql("select tag, count(*) as total_count from mytable group by tag having total count >2").show(10) //HAVING
+
+//spark.sql("select tag, count(*) as total_count from mytable group by tag having total count >2 order by total count asc").show(10) // ORDER BY
+
+//spark.sql("select max(id), min(id), sum(id), avg(id) from mytable").show() //AGGREGATE FUNCTIONS
+
+}
+}
+
+
+=============================
+
+// Memory Partitioning
+
+val x = (1 to 10).toList
+
+val numberDf = x.toDF("number")	// Create dataframe
+
+numberDf.show()
+
+numberDf.rdd.partitions.size	//checking in how many partitiohns my dataframe stored
+
+numberDf.write.csv("partinfo")
+
+val numberDf1 = numberDf.coalesce(3)	// reduce the partitions of my existing dataframe
+
+numberDf1.rdd.partitions.size	// output: 3
+
+numberDf1.write.csv("partinfo1")	// output: 3
+
+// repartitioning
+
+val numberDf2 = numberDf.repartition(2)
+
+numberDf2.rdd.partitions.size
+
+numberDf2.write.csv("partinfo3")
+
+val numberDf2 = numberDf.repartition(6)	// increasing partitions
+
+numberDf2.rdd.partitions.size
+
+numberDf2.write.csv("partinfo3")
+
+============================
+
+//joins in spark sql
+
+// creating Table 1
+val emp1 = sc.parallelize(Array((10,"Inventory","Hybd"), (20,"Finance","Bgh"),(30,"HR","Mumbai"))).toDF("Deptno","DName","Loc")
+
+emp1.show()
+
+// creating Table 2
+val emp2 = sc.parallelize(Array((111,"Saketh","analyst",444,10), (222,"Sudha","derk",333,20),(333,"Jagan","manager",111,10),(444,"madhu","engineer",222,40))).toDF("Empno", "EName", "Job", "Mgr", "Depno")
+
+emp2.show()
+
+// Innner Join method 1
+emp1,join(emp2,"Deptno").show()	   
+// method 2
+emp1,join(emp2,Seq("Deptno"),"inner").show()
+
+//Left outer join	
+emp1,join(emp2,Seq("Deptno"),"left_outer").show()
+
+//Right outer join	
+emp1,join(emp2,Seq("Deptno"),"right_outer").show()
+
+//Full outer join	
+emp1,join(emp2,Seq("Deptno"),"full_outer").show()
+
+// Cross Join
+emp1.crossJoin(emp2).show()
+
+// Now, creating tables that dont have common column
+//Table 1
+val products = sc.parallelize(Array(("steak", "1990-01-01", "2000-01-01", 150),("steak", "2000-01-02", "2020-01-01", 180),("fish", "1990-01-01", "2020-01-01", 100))).toDF("name", "startDate", "endDate", "price")
+
+//Table 2
+val orders = sc.parallelize(Array(("1995-01-01", "steak"),("2000-01-01", "fish"),("2005-01-01", "steak"))).toDF("date", "product")
+
+products.show()
+orders.show()
+
+orders.join(products, $"product" === $"name").show()
+
+orders.join(products, $"product" === $"name" && $"date" >= $"starDate").show()
+
+val df = sc.parallelize(Array((0),(1),(1))).toDF("c1")	//creating table
+df.show()
+
+df..join(df,"c1").show()	// self join (only for 1 table)
+
+
+======================================
+
+
+// SPARK STREAMING
+
+spark streaming -> continuous flow of data
+
+import org.apache.spark.sql.(SparkSession)
+import org.apache.spark.sql.functions._
+val spark = SparkSession.builder().master("local").appName("sparkStreaming").getOrCreate()
+
+val initDF = (spark.readStream.format("rate").option("rowsPerSecond",1).load())
+
+println("Streaming DataFrame: " +initDF.isStreaming)
+
+val resultDf = initDF.withColumn("result", col("value")+lit(1))
+
+resultDf.writeStream.outputMode("append").option("truncate",false).format("console").start().awaitTerminatioin()
+
+=======================================
+
+// Streaming Functionality of Apache Spark
+
+//NetCAT is a featured networking utility which reads and write data accross the network using tcp/ip protocol.
+ncat -version
+
+// Import Libraries
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions._
+
+//create spark session
+SparkSession.builder().master("local").appName("sparkStreaming").getOrCreate()
+
+//Define host and port number to listen.
+val host = "127.0.0.1"
+val port = "9999"
+
+// Create Streaming DataFrame by reading data from Socket.
+val initDF = (spark.readStream.format("socket").option("host", host).option("port",port).load())
+
+//perform word count on streaming DataFrame
+val wordCount = (initDF.Select(explode(split(col("value"), " ")).alias("words")).groupBy("words").count())
+
+wordCount.writeStream.outputMode("complete").format("console").start().awaitTermination()
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+

@@ -1,0 +1,36 @@
+df_pyspark = sparkSession.read.csv('C:/Users/apsag/OneDrive/Documents/missing.csv',header=True, inferSchema=True) 
+
+# Print Schema 
+df_pyspark.printSchema() 
+  
+# Print Dataframe 
+df_pyspark.show() 
+
+Dropping Rows containing Null values
+
+dataframe.na.drop() function drops rows containing even a single null value. 
+ANY -> Drops rows containing any number of Null values
+ALL->  Drops rows only if a row contains all Null values
+
+null_dropped=df_pyspark.na.drop() 
+null_dropped.show()
+
+Subset in dataframe.na.drop()
+
+The subset parameter inside the drop method accepts a list of column names (List[String]) such that the Null check happens only in the mentioned subset of columns.
+
+non_null_year = df_pyspark.na.drop(subset=['Joining Year']) 
+non_null_year.show()
+
+Fill Null Values
+
+df_pyspark.na.fill('Generalist',subset=['Department']).show()
+
+Replace Values
+
+df_pyspark.replace({'Information Tech':'IT'},subset=['Department']).show()
+
+Outlier Removal
+
+df_pyspark.filter('Age<60').show()
+
