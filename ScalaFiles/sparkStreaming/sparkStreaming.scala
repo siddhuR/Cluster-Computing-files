@@ -16,25 +16,33 @@ object sparkStreaming {
     
     val lines = ssc.socketTextStream("localhost", 9999)
     
-    //1. WORD COUNT
-//    val words = lines.flatMap(_.split(" "))
-//    
-//    val pairs = words.map(word => (word, 1))
-//    val wordCounts = pairs.reduceByKey(_ + _)
+//    // 1. WORD COUNT
+      val words = lines.flatMap(_.split(" "))
+      val wordCounts = words.map(word => (word, 1)).reduceByKey(_ + _)
+      wordCounts.print()
+////    val words = lines.flatMap(_.split(" "))
+////    
+////    val pairs = words.map(word => (word, 1))
+////    val wordCounts = pairs.reduceByKey(_ + _)
+////    wordCounts.print()
     
-    //2. Sending number in the console and that number should be multiplied by 10.
+//    //2. Sending number in the console and that number should be multiplied by 10.
 //    val nums = lines.flatMap(_.split(" ")).map(_.toInt)
 //    val pairs = nums.map(nums => (nums*10))
 //    
 //    pairs.print()
-//    
-    //3. count the word count that start with a.
-    val words = lines.flatMap(_.split(" "))
-    val pairs = words.map(word => (word, 1))
-    val wordCounts = pairs.reduceByKey(_ + _)
     
-     //lines.filter()
-//    wordCounts.filter(col("wordCounts").startsWith("a")).show()
+    //3. count the word count that start with a.
+    //val c = lines.flatMap(_.split(" "))
+    //val a = c.filter(x => x.startsWith("a"))
+    //val b = a.map(b=>(b,1))
+    //val w = b.reduceByKey(_ + _)
+    //w.print()
+    
+//     lines.filter()
+     //wordCounts.filter(col("wordCounts").startsWith("a")).show()
+    
+ 
     
     ssc.start()
     ssc.awaitTermination()
