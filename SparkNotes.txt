@@ -278,7 +278,7 @@ public class kafkaConsumer {
 
 >> GraphX
 
-it si the apache spark component for graph parallel computatuibs, build upon a branch of mathematics call graph theory.
+it is the apache spark component for graph parallel computatuibs, build upon a branch of mathematics call graph theory.
 
 it is the combination of 2 parallel branches
 -> Data Parallel
@@ -293,8 +293,8 @@ Raw Data --> ETL (Initial Graph) --> Slice (Subgraph) --> Compute (PageRank) -->
 
 3 components
 
-Edges		0	0
-Verties		 -------
+Edges		 -------
+Verties		0	0
 Triplets	0-------0
 
 --> Creation of GraphX

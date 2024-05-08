@@ -1,0 +1,114 @@
+unit 1:
+
+difference Hadoop and spark?
+similarities, differences, 
+what are components of ecosystem in Hadoop?
+what are components of ecosystem in spark?
+what are different languages does spark supports?
+how many ways does spark can open?
+
+components of spark architecture 	// spark contest, spark session, driver, program and _____
+
+
+unit 2:
+
+basics of scala?
+features of scala?	// lazy, type inference, etc..
+mutable, immutable, collections, tupples, etc..
+sequence, set, map
+typecasting rules
+basic for rule
+conditional statements
+how to create functions
+	// anonymous, recursive, higher order functions
+
+unit 3:
+
+features of RDD
+different operation in RDD
+5 to 6 examples of transformation and actions
+map vs flatmap
+groupby vs reduceby
+countby vs count
+
+etc..
+
+unit 4:
+
+SQL anything can be asked
+use prefix spark.sql
+
+how we can convert rdd to df
+using csv file
+using json file
+using dataframe method
+
+topic: hive context
+how many different types of contexts we have ?	// 4
+
+unit 5:
+study kafka and streaming separately and finally learn combine.
+
+kafka and spark integration video in lpu live
+
+whay we use kafka?
+
+spark streaming ---> structured stream
+(Dstream)		(DF)
+
+what is producer, consumer, offset, 
+
+architecture of kafka components	// producer, comsumer, broker
+
+ncat, rate as a source, file as a source, kafka as a 
+
+
+unit 6:
+
+vertex rdd, edge edd, triplets, matrices, ...........
+
+supervised, un
+technique of ml like transformers, 
+mllib-> datatypes
+algorithms models
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

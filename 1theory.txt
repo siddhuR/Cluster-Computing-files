@@ -1,0 +1,413 @@
+   Spark is also known as Lightning-fast unified analytics engine for big-data and machine learning.
+
+Apache Hadoop is a batch processing framework. it keeps everything in secondary storage HDFS.
+For every iteration, the data will get fetched from disk. its costly and time consuming.
+
+spark: 
+In-memory computation,
+Ease of use
+Spark is batch processing, graph processing, stream processing and iterative processing.
+
+Ecosystem of spark:
+Kafka, MySQL, PostgreesSQL, mongoDB, HBASE, HDFS, redis, elastic etc..
+
+Components and API stack of Spark:
+1. SparkSQL and DF + Datasets (Structured data)
+2. Spark Streaming (Structured Streaming)(for real time)
+3. Machine Learning MLlib
+4. Graph Processing Graph X (Dealing with network data)
+
+Spark Core and Spark SQL Engine
+Scala, SQL, Python, Java, R
+
+We can use spark on YARN, MESOS
+===========
+
+Hadoop frame work is composed of
+ - Hadoop Common
+ - Hadoop Distributed File System
+ - Hadoop YARN
+ - Hadoop MapReduce
+Non core components Like
+ - Hive
+ - Flume
+ - YARN
+ - HBase
+ - pig etc
+
+===========
+
+Spark code:
+
+import.org.apache.spark.sql.SparkSession
+
+object obj1 {
+	def main(args: Array[string])
+	{
+		val spark = SparkSession.builder().master("local[1]").appName("abc").getOrCreate();
+
+println("Spark Version : " + spark.version)
+
+}
+
+
+================================
+
+UNIT 2
+
+Scala:
+-> scalable language with both object oriented and Functional Oriented language
+
+-> it has lazy evaluation, type inference, immutability etc..
+
+Features of SCALA:
+-> Type inference:
+scala automatically detects the datatype without specifying manually.
+
+-> Immutability
+once assigned a value, we can not be modify it again
+
+-> Lazy Computation
+It only evaluates an expression when required. this increases performance by reducing compile time.
+
+-> Higher-Order Functions:
+functions which take other functions as arguments. they can also return functions along with simple data types.
+
+-> case classes & pattern matching:
+In scala, case classes are regular classes with the added feature of being immutable.
+These case classes are useful for pattern matching, which is used for checking a value against a pattern and deconstructing it into its constituent parts.
+
+-> String Interpolation:
+Allows to embed variables directly inside string literal allowing the creation of strings through data.
+
+-> traits
+collection of abstract and non-abstract methods.
+
+-> Extensive Collection
+Divided into 2 categories, mutable and immutable collections.
+
+============
+
+Variables and printing methods: 
+
+keyword variableName: DataType = Initial Value
+val myFirstScalaVaiable: Int = 5
+
+Also, val myFirstScalaVaiable = 5
+
+val -> immutable
+var -> mutable
+
+print	-> it just print anything you pass it, one after the other in same line
+println	-> display in separate line
+printf	-> append different data types to your text that is to be printed.
+
+Type Casting:
+Double <- Float <- Long <- Int <- Short <- Byte
+			   Int <- Char
+example:
+val oldType: Char = 'A'
+val newType: Int = oldType
+
+========
+
+Types of Operators:
+Arithmetic Operators -> +, -, *, /, %
+Relational Operators -> >, <, >=, <=, !=
+Logical Operators -> &&, ||, !
+Bitwise Operators -> &, |, ^, ~, <<
+Assignment Operators -> +=, -=, *=, /=, %=
+
+=======
+
+Functions & Methods
+
+val string1 = "Hello World"
+val result = string1.indexOf('W')	// val result = string1 indexOf 'W'
+println(result)
+
+=======
+
+1. Syntax for Single Variable Expressions
+s"Optional String $VariableIdentifier Optional String"
+example:
+val channel = "Unboxing Big Data"
+println(s"Kindly subscribe $channel!")
+
+2. Syntax for String Interpolation with 'f':
+f"String $VariableIdentifier%FormatSpecifier String"
+example:
+val pi = 3.14159F
+println(f"the value of pi is $pi%.2f")
+
+3. Syntax for String Interpolation with 'raw'
+println(raw"with Raw:\nFirst\nSecond")		// output is same like input without any change.
+
+============
+
+classes and Objects
+
+class Person(var name: String, var age: Int) {
+  def greet(): Unit = {
+    println(s"Hello, my name is $name and I am $age years old.")
+  }
+}
+====
+object MyApp {
+  def main(args: Array[String]): Unit = {
+    val person1 = new Person("Alice", 30)
+    person1.greet()
+  }
+}
+
+====
+
+val name = scala.io.StdIn.readLine()
+val age = scala.io.StdIn.readInt()
+println(s"Hello, $name! You are $age years old.")
+
+====
+Collection:
+- mutable collection
+- immutable collections
+
+===
+
+Sequences - Seq
+Sets - Set
+Maps - Map
+
+-these all consists of mutable and immutable collections
+
+example:
+val seqCollection = Seq(2,4,6,8)
+val result = seqCollection.apply(1)
+
+val setCollection = Set("apple", "Orange", "Banana", "Grape")
+val result1= setCollection.apply("Orange")
+
+val mapCollection = Map(("a",25),("b",50),("c",75))
+val result2= mapCollection.apply("c")
+
+===FOREACH METHOD:
+
+seqCollection.foreach(println)
+
+=======
+
+ARRAY COLLECTION:
+
+Syntax: val arrayName = Array(element 1, element 2, ..., element n)
+
+val array1 = Array.range(0,5)	// range(start, number of elements)
+array1.foreach(println)
+
+val array2 = Array.fill(2)("UBD")	// fill(number of elements)(value)
+array2.foreach(println)
+
+val array3 = "hello".toArray	//converts arguments to an array
+array3.foreach(println)
+
+====
+
+Array Buffers:
+An array buffer in scala is a collection that comes under the sequence class.
+-Both array and arrayBuffers are mutable in nature
+-we can add and remove elements from arrayBuffers but not in Arrays
+-import one package
+	scala.collection.mutable.ArrayBuffer
+syntax: val arrayBufferName = new ArrayBuffer[DataType] ()
+
+// creating ArrayBuffer
+import scala.collection.mutable.ArrayBuffer
+val myFirstArrayBuffer = ArrayBuffer(1,2,3,4,5)
+myFirstArrayBuffer.foreach(println)
+
+// Adding Elements
+val newArrayBuff = new ArrayBuffer[Int]()
+
+newArrayBuff +=6
+newArrayBuff +=15
+
+newArrayBuff.foreach(println)
+
+// Deleting Elements
+
+newArrayBuff -=4
+
+// 2nd Method:
+newArrayBuff.remove(4)	// 4 is index position
+
+// 3rd method:
+newArrayBuff.clear
+
+============
+
+Vectors:
+
+List and Vectors are immutable
+
+// Initializing a Vector
+val numVector = Vector(1,2,3,4,5)
+numVector.foreach(println)
+
+// Initializing an empty vector
+val emptyVector = Vector.empty
+
+// Appending an Element
+val pVector = Vector("a", "b", "c")
+val pVector2 = pVector :+ "d"
+
+pVector2.foreach(println)
+
+// prepending an element
+val pVector3 = "z" +:pVector2
+
+// Vector Concatenation
+val tempVector = Vector("e","f")
+val pVector4 = pVector3 ++ tempVector
+
+============
+
+LazyList:
+Both LazyList and List are immutable and comes under the seq class
+
+// Creation of Lazy List
+val myFirtLazyList = 1.5 #:: 2.5 #:: 3.5 #:: LazyList.empty
+myFirstList.foreach(println)
+
+// Lazy computation
+
+val wholeList = "Orange"::"Banana"::"Apple"::"Grape"::Nil
+
+print(wholeList)
+
+val wholeLazyList = "Orange"#::"Banana"#::"Apple"#::"Grape"#::LLazyList.empty
+print(wholeLazyList)
+
+val list = List.from(1 to 100000000)
+
+val lazyList = LazyList.from(1 to 100000000)
+
+// older scala till 2.13 version lazy list is stream
+val myFirstLazyList = 1.5 #:: 2.5 #:: 3.5 #:: Stream.empty[Double]
+
+val lazyList = Stream.from(1).take(100000000)
+
+============
+
+clases and Objects:
+
+class Person{
+var name: String = "temp"
+var gender: String = "temp"
+var age: Int = 0
+
+def walking = println(s"$name is walking")
+def talking = println(s"$name is talking")
+}
+
+// Creating an object of the person class
+val firstPerson = new Person
+
+firstPerson.name = "Sarah"
+firstPerson.gender = "Female"
+firstPerson.age = 25
+
+println(firstPerson.name)
+println(firstPerson.gender)
+println(firstPerson.age)
+
+#2.
+// calling a class method
+
+class Persoon{
+var name: String = "temp"
+var gender: String = "temp"
+var age: Int = 0
+
+def walking = println(s"$name is walking")
+def talking = println(s"$name is talking")
+}
+
+// creating an object of the Person class
+val firstPerson = new Person
+
+firstPerson.name = "Sarah"
+firstPerson.gender = "Female"
+firstPerson.age = 25
+
+firstPerson.walking
+firstPerson.talking
+
+#3.
+// multiple Objects of the same class
+
+class Persoon{
+var name: String = "temp"
+var gender: String = "temp"
+var age: Int = 0
+
+def walking = println(s"$name is walking")
+def talking = println(s"$name is talking")
+}
+
+// creating an object of the Person class
+val firstPerson = new Person
+
+firstPerson.name = "Sarah"
+firstPerson.gender = "Female"
+firstPerson.age = 25
+
+// creating an object of the Person class
+val SecondPerson = new Person
+SecondPerson.name = "Ben"
+
+// creating an object of the Person class
+val ThirdPerson = new Person
+ThirdPerson.name = "Martin"
+
+// creating an object of the Person class
+val FourthPerson = new Person
+FourthPerson.name = "Hannah"
+
+// Driver Code
+println(firstPerson.name)
+println(SecondPerson.name)
+println(ThirdPerson.name)
+println(FourthPerson.name)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
