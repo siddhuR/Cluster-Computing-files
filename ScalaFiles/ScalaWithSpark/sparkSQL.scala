@@ -18,8 +18,8 @@ object sparkSQL {
 //    spark.sql("show tables").show()
 //    
 //    // print id and tag
-//    df.select("id","tag").show()  // spark api method
-//    spark.sql("SELECT id, tag FROM mytable").show  // spark SQL method
+    df.select("id","tag").show()  // spark api method
+    spark.sql("SELECT id, tag FROM mytable").show  // spark SQL method
 //    
 //    // Find all the rows where tag column has value of css
 //    
